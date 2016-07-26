@@ -27,8 +27,6 @@ public:
 	void PickUp();
 
 	void Drop(FVector Location, FRotator Rotation);
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Opens)
-		FVector EndLocation;
 
 private:
 	float CurrentY;

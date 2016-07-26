@@ -16,8 +16,7 @@ class TELESHOOT_API APortal : public AActor
 	class UStaticMeshComponent* CompleteMesh;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* SpeedMesh;
-
-	UMaterialInstanceDynamic* CompleteMaterial, * SpeedMaterial;
+	UMaterialInterface* CompleteMaterial, * SpeedMaterial;
 public:
 	// Sets default values for this actor's properties
 	APortal();

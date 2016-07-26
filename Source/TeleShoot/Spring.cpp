@@ -35,14 +35,12 @@ ASpring::ASpring()
 
 	RootComponent = MeshComponent;
 	CollisionComp->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
-	Ready = true;
 }
 
 // Called when the game starts or when spawned
 void ASpring::BeginPlay()
 {
 	Super::BeginPlay();
-	Player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 }
 
 // Called every frame

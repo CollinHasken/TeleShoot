@@ -16,10 +16,11 @@ APortal::APortal()
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
 	CompleteMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CompleteMesh"));
 	SpeedMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SpeedMesh"));
-	if (MeshConstruct.Succeeded())
+	if (MeshConstruct.Succeeded()) {
 		MeshComponent->SetStaticMesh(MeshConstruct.Object);
 		CompleteMesh->SetStaticMesh(MeshConstruct.Object);
 		SpeedMesh->SetStaticMesh(MeshConstruct.Object);
+	}
 	if (MeshMaterial.Succeeded())
 		MeshComponent->SetMaterial(0, MeshMaterial.Object);
 	MeshComponent->bCastDynamicShadow = true;
@@ -28,11 +29,11 @@ APortal::APortal()
 	MeshComponent->SetHiddenInGame(false);
 	MeshComponent->CanCharacterStepUpOn = ECB_No;
 	MeshComponent->SetWorldScale3D(FVector(1, 0.02, 1.75));
-
-	static ConstructorHelpers::FObjectFinder<UMaterial> StarMeshMaterial(TEXT("Material'/Game/SideScrollerCPP/Materials/GoalStarMaterial.GoalStarMaterial'"));
-	if (StarMeshMaterial.Succeeded())
+	static ConstructorHelpers::FObjectFinder<UMaterial> StarMeshMaterial(TEXT("MaterialInstanceConstant'/Game/SideScrollerCPP/Materials/GoalStarMaterial.GoalStarMaterial'"));
+	if (StarMeshMaterial.Succeeded()) {
 		CompleteMesh->SetMaterial(0, StarMeshMaterial.Object);
 		SpeedMesh->SetMaterial(0, StarMeshMaterial.Object);
+	}
 	CompleteMesh->bCastDynamicShadow = true;
 	CompleteMesh->CastShadow = true;
 	CompleteMesh->BodyInstance.SetCollisionProfileName("NoCollision");
@@ -40,7 +41,6 @@ APortal::APortal()
 	CompleteMesh->CanCharacterStepUpOn = ECB_No;
 	CompleteMesh->SetWorldScale3D(FVector(.3, 11.9, .17));
 	CompleteMesh->SetRelativeLocation(FVector(-30,0,66));
-
 	SpeedMesh->bCastDynamicShadow = true;
 	SpeedMesh->CastShadow = true;
 	SpeedMesh->BodyInstance.SetCollisionProfileName("NoCollision");
@@ -52,22 +52,23 @@ APortal::APortal()
 	RootComponent = MeshComponent;
 	CompleteMesh->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	SpeedMesh->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+
+	static ConstructorHelpers::FObjectFinder<UMaterial> CompleteMat(TEXT("MaterialInstanceConstant'/Game/SideScrollerCPP/Materials/CompleteMaterial.CompleteMaterial'"));
+	static ConstructorHelpers::FObjectFinder<UMaterial> SpeedMat(TEXT("MaterialInstanceConstant'/Game/SideScrollerCPP/Materials/SpeedMaterial.SpeedMaterial'"));
+	
+	CompleteMaterial = CompleteMat.Object;
+	SpeedMaterial = SpeedMat.Object;
 }
 
 // Called when the game starts or when spawned
 void APortal::BeginPlay()
 {
 	Super::BeginPlay();
-	CompleteMaterial = UMaterialInstanceDynamic::Create(CompleteMesh->GetMaterial(0), this);
-	SpeedMaterial = UMaterialInstanceDynamic::Create(SpeedMesh->GetMaterial(0), this);
-
 	UTeleShootGameInstance* GameInstance = Cast<UTeleShootGameInstance>(GetGameInstance());
-	if (GameInstance->IsLevelComplete(LevelName) || true) {
-		CompleteMaterial->SetScalarParameterValue("Desaturation", 0);
+	if (GameInstance->IsLevelComplete(LevelName)) {
 		CompleteMesh->SetMaterial(0, CompleteMaterial);
 	}
 	if (GameInstance->IsLevelSpeed(LevelName)) {
-		SpeedMaterial->SetScalarParameterValue("Desaturation", 0);
 		SpeedMesh->SetMaterial(0, SpeedMaterial);
 	}
 }

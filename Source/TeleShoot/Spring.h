@@ -30,10 +30,4 @@ public:
 		void OnActorBeginOverlap(class UPrimitiveComponent* Comp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Spring)
 		float SpringForce;
-
-private:
-	AActor* Player;
-	FTimerHandle ResetHandler;
-	FVector StartLocation;
-	bool Ready;
 };

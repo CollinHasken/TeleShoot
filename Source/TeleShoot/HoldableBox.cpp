@@ -47,14 +47,13 @@ void AHoldableBox::Tick(float DeltaTime)
 }
 
 void AHoldableBox::PickUp() {
-	//SetActorHiddenInGame(true);
+	SetActorHiddenInGame(true);
 	//SetActorEnableCollision(false);
-	SetActorLocation(EndLocation);
 }
 
 void AHoldableBox::Drop(FVector Location, FRotator Rotation) {
 	SetActorHiddenInGame(false);
-	SetActorEnableCollision(true);
+	//SetActorEnableCollision(true);
 	SetActorLocationAndRotation(Location, Rotation);
 	MeshComponent->ComponentVelocity = FVector(0, 0, 0);
 }

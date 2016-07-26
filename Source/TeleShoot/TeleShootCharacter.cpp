@@ -39,7 +39,7 @@ ATeleShootCharacter::ATeleShootCharacter()
 	BoxSpring->bInheritPitch = BoxSpring->bInheritRoll = false;
 	BoxSpring->bInheritYaw = true;
 	BoxSpring->bDoCollisionTest = true;
-	BoxSpring->TargetArmLength = 120;
+	BoxSpring->TargetArmLength = 160;
 
 	// Create a camera and attach to boom
 	SideViewCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("SideViewCamera"));
@@ -56,7 +56,7 @@ ATeleShootCharacter::ATeleShootCharacter()
 		HoldBox->SetStaticMesh(MeshConstruct.Object);
 	if (MeshMaterial.Succeeded())
 		HoldBox->SetMaterial(0, MeshMaterial.Object);
-	HoldBox->SetRelativeScale3D(FVector(.38, .38, .38));
+	HoldBox->SetRelativeScale3D(FVector(.7, .7, .7));
 	HoldBox->BodyInstance.SetCollisionProfileName("NoCollision");
 	HoldBox->SetComponentTickEnabled(false);
 	HoldBox->SetHiddenInGame(true);
