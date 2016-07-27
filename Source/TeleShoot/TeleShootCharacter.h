@@ -59,7 +59,8 @@ protected:
 	void Duck();
 	void Unduck();
 
-	void SprintToggle();
+	void SprintOn();
+	void SprintOff();
 
 	virtual void TeleJump();
 	virtual void Interact();

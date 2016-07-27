@@ -122,8 +122,8 @@ void ATeleShootCharacter::SetupPlayerInputComponent(class UInputComponent* Input
 	InputComponent->BindAction("Duck", IE_Pressed, this, &ATeleShootCharacter::Duck);
 	InputComponent->BindAction("Duck", IE_Released, this, &ATeleShootCharacter::Unduck);
 	InputComponent->BindAxis("MoveRight", this, &ATeleShootCharacter::MoveRight);
-	InputComponent->BindAction("SprintToggle", IE_Pressed, this, &ATeleShootCharacter::SprintToggle);
-	InputComponent->BindAction("SprintToggle", IE_Released, this, &ATeleShootCharacter::SprintToggle);
+	InputComponent->BindAction("SprintToggle", IE_Pressed, this, &ATeleShootCharacter::SprintOn);
+	InputComponent->BindAction("SprintToggle", IE_Released, this, &ATeleShootCharacter::SprintOff);
 	InputComponent->BindAction("Interact", IE_Pressed, this, &ATeleShootCharacter::Interact);
 
 	InputComponent->BindTouch(IE_Pressed, this, &ATeleShootCharacter::TouchStarted);
@@ -239,11 +239,12 @@ void ATeleShootCharacter::Unduck() {
 	}
 }
 
-void ATeleShootCharacter::SprintToggle() {
-	if (GetCharacterMovement()->MaxWalkSpeed == WalkSpeed)
-		GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
-	else
-		GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+void ATeleShootCharacter::SprintOn() {
+	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+}
+
+void ATeleShootCharacter::SprintOff() {
+	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
 }
 
 void ATeleShootCharacter::TouchStarted(const ETouchIndex::Type FingerIndex, const FVector Location)

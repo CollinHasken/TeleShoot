@@ -2,7 +2,6 @@
 
 #include "TeleShoot.h"
 #include "ActivatablePlatform.h"
-#include "Engine.h"
 
 AActivatablePlatform::AActivatablePlatform() {
 	PrimaryActorTick.bCanEverTick = true;
@@ -38,7 +37,6 @@ void AActivatablePlatform::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	if (Activated || Deactivated) {
-		GEngine->AddOnScreenDebugMessage(1, 15.0f, FColor::Red, GetActorLocation().ToString());
 		if (Activated && (GetActorLocation() - EndLocation).Size() < 5) {
 			SetActorLocation(EndLocation);
 			Activated = false;
