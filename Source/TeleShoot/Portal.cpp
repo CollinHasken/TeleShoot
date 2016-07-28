@@ -56,9 +56,11 @@ APortal::APortal()
 
 	static ConstructorHelpers::FObjectFinder<UMaterial> CompleteMat(TEXT("MaterialInstanceConstant'/Game/SideScrollerCPP/Materials/CompleteMaterial.CompleteMaterial'"));
 	static ConstructorHelpers::FObjectFinder<UMaterial> SpeedMat(TEXT("MaterialInstanceConstant'/Game/SideScrollerCPP/Materials/SpeedMaterial.SpeedMaterial'"));
-	
+
 	CompleteMaterial = CompleteMat.Object;
 	SpeedMaterial = SpeedMat.Object;
+
+	Overworld = false;
 }
 
 // Called when the game starts or when spawned
@@ -66,13 +68,19 @@ void APortal::BeginPlay()
 {
 	Super::BeginPlay();
 	UTeleShootGameInstance* GameInstance = Cast<UTeleShootGameInstance>(GetGameInstance());
-	if (GameInstance->IsLevelComplete(LevelName)) {
-		CompleteMesh->SetMaterial(0, CompleteMaterial);
-		for (AActivatable* Activate : Activatable)
-			Activate->Activate();
+	if (Overworld) {
+		CompleteMesh->SetHiddenInGame(true);
+		SpeedMesh->SetHiddenInGame(true);
 	}
-	if (GameInstance->IsLevelSpeed(LevelName)) {
-		SpeedMesh->SetMaterial(0, SpeedMaterial);
+	else {
+		if (GameInstance->IsLevelComplete(LevelName)) {
+			CompleteMesh->SetMaterial(0, CompleteMaterial);
+			for (AActivatable* Activate : Activatable)
+				Activate->Activate();
+		}
+		if (GameInstance->IsLevelSpeed(LevelName)) {
+			SpeedMesh->SetMaterial(0, SpeedMaterial);
+		}
 	}
 }
 

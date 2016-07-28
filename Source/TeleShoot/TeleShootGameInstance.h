@@ -29,10 +29,12 @@ public:
 	void UpgradeGun(UpgradeType Upgrade);
 	void UpdateUpgrades(bool (&CharacterGunUpgrades)[6]);
 	bool GunUpgrades[6] = { false };
+	FName GetRecentLevel();
 
 private:
 	bool TeleportTo;
 	bool LevelAndWorld(FName LevelName, int& Level, int& World);
+	FName RecentLevel;
 	TArray<bool> World1Info;
 	TArray<bool> World2Info;
 	TArray<TArray<bool>> WorldsInfo;

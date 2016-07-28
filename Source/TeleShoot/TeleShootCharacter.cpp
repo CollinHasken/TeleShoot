@@ -108,7 +108,6 @@ ATeleShootCharacter::ATeleShootCharacter()
 	DoubleJumpHeight = 800;
 	MouseClicked = JustTeleported = AtPeak = IsSliding = TryingToUncrouch = false;
 	CanMove = true;
-
 	// Note: The skeletal mesh and animation blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 }
@@ -213,7 +212,7 @@ void ATeleShootCharacter::TeleJump() {
 
 void ATeleShootCharacter::Duck() {
 	if (!GetCharacterMovement()->IsFalling() && !IsSliding && CanMove) {
-		if (GetCharacterMovement()->MaxWalkSpeed == SprintSpeed) {
+		if (!GetCharacterMovement()->Velocity.IsNearlyZero()) {
 			IsSliding = true;
 			GetCharacterMovement()->MaxWalkSpeedCrouched = 3000;
 			if(GetActorForwardVector().X >= 0)

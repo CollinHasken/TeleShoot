@@ -24,6 +24,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level")
 		FName LevelName;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Level")
+		bool Overworld;
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 

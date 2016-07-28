@@ -10,6 +10,7 @@ class ATeleShootGameMode : public AGameMode
 
 public:
 	ATeleShootGameMode();
+
 };
 
 
