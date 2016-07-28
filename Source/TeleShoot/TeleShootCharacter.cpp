@@ -10,6 +10,8 @@
 #include "HoldableBox.h"
 #include "GameFramework/PlayerController.h"
 #include "DrawDebugHelpers.h"
+#include "GunUpgrade.h"
+#include "TeleShootGameInstance.h"
 #include "GameFramework/PlayerStart.h"
 
 ATeleShootCharacter::ATeleShootCharacter()
@@ -40,7 +42,7 @@ ATeleShootCharacter::ATeleShootCharacter()
 	BoxSpring->bInheritYaw = true;
 	BoxSpring->bDoCollisionTest = true;
 	BoxSpring->TargetArmLength = 160;
-
+	
 	// Create a camera and attach to boom
 	SideViewCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("SideViewCamera"));
 	SideViewCameraComponent->AttachToComponent(CameraBoom, FAttachmentTransformRules::KeepRelativeTransform, USpringArmComponent::SocketName);
@@ -74,7 +76,7 @@ ATeleShootCharacter::ATeleShootCharacter()
 	GetCharacterMovement()->AirControl = 0.80f;
 	GetCharacterMovement()->JumpZVelocity = 900.f;
 	GetCharacterMovement()->GroundFriction = 3.f;
-	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
 	GetCharacterMovement()->GetNavAgentPropertiesRef().bCanCrouch = true;
 	GetCharacterMovement()->MaxWalkSpeedCrouched = 300;
 
@@ -106,6 +108,7 @@ ATeleShootCharacter::ATeleShootCharacter()
 	DoubleJumpHeight = 800;
 	MouseClicked = JustTeleported = AtPeak = IsSliding = TryingToUncrouch = false;
 	CanMove = true;
+
 	// Note: The skeletal mesh and animation blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 }
@@ -122,8 +125,8 @@ void ATeleShootCharacter::SetupPlayerInputComponent(class UInputComponent* Input
 	InputComponent->BindAction("Duck", IE_Pressed, this, &ATeleShootCharacter::Duck);
 	InputComponent->BindAction("Duck", IE_Released, this, &ATeleShootCharacter::Unduck);
 	InputComponent->BindAxis("MoveRight", this, &ATeleShootCharacter::MoveRight);
-	InputComponent->BindAction("SprintToggle", IE_Pressed, this, &ATeleShootCharacter::SprintOn);
-	InputComponent->BindAction("SprintToggle", IE_Released, this, &ATeleShootCharacter::SprintOff);
+	InputComponent->BindAction("SprintToggle", IE_Pressed, this, &ATeleShootCharacter::WalkOn);
+	InputComponent->BindAction("SprintToggle", IE_Released, this, &ATeleShootCharacter::WalkOff);
 	InputComponent->BindAction("Interact", IE_Pressed, this, &ATeleShootCharacter::Interact);
 
 	InputComponent->BindTouch(IE_Pressed, this, &ATeleShootCharacter::TouchStarted);
@@ -140,6 +143,8 @@ void ATeleShootCharacter::BeginPlay() {
 	Super::BeginPlay();
 	OriginalCameraPosition = SideViewCameraComponent->GetComponentLocation() - GetActorLocation();
 	OriginalYAxis = GetActorLocation().Y;
+	UTeleShootGameInstance* Game = Cast<UTeleShootGameInstance>(GetGameInstance());
+	Game->UpdateUpgrades(GunUpgrades);
 }
 
 void ATeleShootCharacter::Tick(float DeltaTime) {
@@ -211,7 +216,10 @@ void ATeleShootCharacter::Duck() {
 		if (GetCharacterMovement()->MaxWalkSpeed == SprintSpeed) {
 			IsSliding = true;
 			GetCharacterMovement()->MaxWalkSpeedCrouched = 3000;
-			LaunchCharacter(FVector(2000, 0, 0) * GetActorForwardVector(), true, true);
+			if(GetActorForwardVector().X >= 0)
+				LaunchCharacter(FVector(2000, 0, 0), true, true);
+			else
+				LaunchCharacter(FVector(-2000, 0, 0), true, true);
 			GetWorld()->GetTimerManager().SetTimer(SlideTimer, this, &ATeleShootCharacter::DoneSlide, 0.75, false);
 		}
 		Crouch();
@@ -239,11 +247,11 @@ void ATeleShootCharacter::Unduck() {
 	}
 }
 
-void ATeleShootCharacter::SprintOn() {
+void ATeleShootCharacter::WalkOn() {
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 }
 
-void ATeleShootCharacter::SprintOff() {
+void ATeleShootCharacter::WalkOff() {
 	GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
 }
 
@@ -324,6 +332,26 @@ void ATeleShootCharacter::Interact() {
 	}
 }
 
+void ATeleShootCharacter::UpgradeGun(UpgradeType Upgrade) {
+	switch (Upgrade) {
+		case UpgradeType::TeleportTo :
+			GunUpgrades[0] = true;
+			break;
+		default:
+			break;
+	}
+}
+
+bool ATeleShootCharacter::HasGunUpgrade(UpgradeType Upgrade)
+{
+	switch (Upgrade) {
+	case UpgradeType::TeleportTo:
+		return GunUpgrades[0];
+	default:
+		return false;
+	}
+}
+
 void ATeleShootCharacter::CheckMousePosition(FVector ActorLocation, FVector CameraLocation, float DeltaTime) {
 	APlayerController* PlayerController = Cast<APlayerController>(GetController());
 	if (PlayerController) {
@@ -369,7 +397,7 @@ void ATeleShootCharacter::Fire2DRelease() {
 	MouseClicked = false;
 
 	UWorld* const World = GetWorld();
-	if (World == NULL || World->GetTimeSeconds() < ShotTime + FireRate || !CanMove)
+	if (World == NULL || World->GetTimeSeconds() < ShotTime + FireRate || !CanMove || !GunUpgrades[0])
 		return;
 	FVector MousePosition;
 	FVector MouseDirection;
@@ -422,7 +450,7 @@ void ATeleShootCharacter::Fire3DRelease() {
 	MouseClicked = false;
 
 	UWorld* const World = GetWorld();
-	if (World == NULL || World->GetTimeSeconds() < ShotTime + FireRate || !CanMove)
+	if (World == NULL || World->GetTimeSeconds() < ShotTime + FireRate || !CanMove || !GunUpgrades[3])
 		return;
 	FVector MousePosition;
 	FVector MouseDirection;

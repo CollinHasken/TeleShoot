@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Engine/GameInstance.h"
+#include "GunUpgrade.h"
 #include "TeleShootGameInstance.generated.h"
 
 /**
@@ -15,7 +16,7 @@ class TELESHOOT_API UTeleShootGameInstance : public UGameInstance
 
 	UTeleShootGameInstance();
 	const int Worlds = 2;
-	const int World1 = 3;
+	const int World1 = 5;
 	const int World2 = 4;
 	const int StarsPerLevel = 2;
 
@@ -25,8 +26,12 @@ public:
 	void EndLevel(FName LevelName, bool BeatSpeed);
 	bool IsLevelComplete(FName LevelName);
 	bool IsLevelSpeed(FName LevelName);
+	void UpgradeGun(UpgradeType Upgrade);
+	void UpdateUpgrades(bool (&CharacterGunUpgrades)[6]);
+	bool GunUpgrades[6] = { false };
 
 private:
+	bool TeleportTo;
 	bool LevelAndWorld(FName LevelName, int& Level, int& World);
 	TArray<bool> World1Info;
 	TArray<bool> World2Info;

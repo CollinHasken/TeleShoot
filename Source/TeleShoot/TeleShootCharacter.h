@@ -2,6 +2,8 @@
 #pragma once
 #include "GameFramework/Character.h"
 #include "HoldableBox.h"
+#include "GunUpgrade.h"
+
 #include "TeleShootCharacter.generated.h"
 
 UCLASS(config = Game)
@@ -59,8 +61,8 @@ protected:
 	void Duck();
 	void Unduck();
 
-	void SprintOn();
-	void SprintOff();
+	void WalkOn();
+	void WalkOff();
 
 	virtual void TeleJump();
 	virtual void Interact();
@@ -84,6 +86,10 @@ public:
 		float offset;
 
 	void SwitchLocation(FVector Location, bool CanJumpAgain);
+
+	void UpgradeGun(UpgradeType Upgrade);
+
+	bool HasGunUpgrade(UpgradeType Upgrade);
 
 	void UpdateBoxPosition();
 
@@ -122,4 +128,5 @@ private:
 	bool IsSliding;
 	bool TryingToUncrouch;
 	bool CanMove;
+	bool GunUpgrades[6] = {false}; //{TeleportTo, BringTo, Switch, ThreeD, TimeSlow, Charge}
 };

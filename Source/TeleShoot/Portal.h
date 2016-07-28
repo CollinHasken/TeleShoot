@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
+#include "Activatable.h"
 #include "Portal.generated.h"
 
 UCLASS()
@@ -33,5 +34,7 @@ public:
 
 	FORCEINLINE class UStaticMeshComponent* GetMeshComponent() const { return MeshComponent; }
 
+	UPROPERTY(EditAnywhere, Category = Activates)
+		TArray<AActivatable*> Activatable;
 
 };

@@ -3,6 +3,7 @@
 #include "TeleShoot.h"
 #include "TeleShootGameInstance.h"
 #include "Kismet/GameplayStatics.h"
+#include "GunUpgrade.h"
 
 
 UTeleShootGameInstance::UTeleShootGameInstance() {
@@ -14,6 +15,22 @@ UTeleShootGameInstance::UTeleShootGameInstance() {
 
 void UTeleShootGameInstance::ChangeLevel(FName LevelName) {
 	UGameplayStatics::OpenLevel(GetWorld(), LevelName);
+}
+
+void UTeleShootGameInstance::UpgradeGun(UpgradeType Upgrade) {
+	switch (Upgrade) {
+	case UpgradeType::TeleportTo:
+		GunUpgrades[0] = true;
+		break;
+	default:
+		break;
+	}
+}
+
+void UTeleShootGameInstance::UpdateUpgrades(bool (&CharacterGunUpgrades)[6]) {
+	for (int i = 0; i < 5; i++) {
+		CharacterGunUpgrades[i] = GunUpgrades[i];
+	}
 }
 
 bool UTeleShootGameInstance::IsLevelComplete(FName LevelName) {

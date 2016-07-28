@@ -4,6 +4,7 @@
 #include "Goal.h"
 #include "TeleShootCharacter.h"
 #include "TeleShootGameInstance.h"
+#include "Engine.h"
 
 
 // Sets default values
@@ -44,14 +45,16 @@ AGoal::AGoal()
 void AGoal::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	StartTime = GetWorld()->GetRealTimeSeconds();
+	GEngine->AddOnScreenDebugMessage(1, 10000.f, FColor::Red, FString::Printf(TEXT("Par: %.2f"), ParTime));
 }
 
 // Called every frame
 void AGoal::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
-
+	if(!BeatSpeed)
+	GEngine->AddOnScreenDebugMessage(2, 5.f, FColor::Red, FString::Printf(TEXT("Time: %.2f"), GetWorld()->GetTimeSeconds() - StartTime));
 }
 
 void AGoal::OnActorBeginOverlap(class UPrimitiveComponent* Comp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) {
@@ -59,6 +62,8 @@ void AGoal::OnActorBeginOverlap(class UPrimitiveComponent* Comp, class AActor* O
 		ATeleShootCharacter* Character = Cast<ATeleShootCharacter>(OtherActor);
 		Character->EndLevel();
 		GetWorld()->GetTimerManager().SetTimer(EndLevelTimer, this, &AGoal::LevelEnded, 2, false);
+		if ((GetWorld()->GetTimeSeconds() - StartTime) <= ParTime)
+			BeatSpeed = true;
 	}
 }
 

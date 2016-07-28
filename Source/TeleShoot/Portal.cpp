@@ -3,6 +3,7 @@
 #include "TeleShoot.h"
 #include "Portal.h"
 #include "TeleShootGameInstance.h"
+#include "Activatable.h"
 
 
 // Sets default values
@@ -67,6 +68,8 @@ void APortal::BeginPlay()
 	UTeleShootGameInstance* GameInstance = Cast<UTeleShootGameInstance>(GetGameInstance());
 	if (GameInstance->IsLevelComplete(LevelName)) {
 		CompleteMesh->SetMaterial(0, CompleteMaterial);
+		for (AActivatable* Activate : Activatable)
+			Activate->Activate();
 	}
 	if (GameInstance->IsLevelSpeed(LevelName)) {
 		SpeedMesh->SetMaterial(0, SpeedMaterial);

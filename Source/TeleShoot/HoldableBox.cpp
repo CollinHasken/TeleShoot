@@ -21,7 +21,7 @@ AHoldableBox::AHoldableBox()
 	if (MeshMaterial.Succeeded())
 		MeshComponent->SetMaterial(0, MeshMaterial.Object);
 	MeshComponent->SetHiddenInGame(false);
-	MeshComponent->SetRelativeScale3D(FVector(.38, .38, .38));
+	MeshComponent->SetRelativeScale3D(FVector(.7, .7, .7));
 	MeshComponent->BodyInstance.SetCollisionProfileName("Interact");
 	MeshComponent->SetSimulatePhysics(true);
 
@@ -53,8 +53,10 @@ void AHoldableBox::PickUp() {
 
 void AHoldableBox::Drop(FVector Location, FRotator Rotation) {
 	SetActorHiddenInGame(false);
-	SetActorEnableCollision(true);
 	SetActorLocationAndRotation(Location, Rotation);
 	MeshComponent->ComponentVelocity = FVector(0, 0, 0);
+	SetActorEnableCollision(true);
+	MeshComponent->SetSimulatePhysics(false);
+	MeshComponent->SetSimulatePhysics(true);
 }
 
