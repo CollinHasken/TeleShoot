@@ -88,7 +88,6 @@ void APortal::BeginPlay()
 void APortal::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void APortal::ChangeLevel() {

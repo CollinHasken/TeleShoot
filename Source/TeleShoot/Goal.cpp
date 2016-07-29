@@ -61,7 +61,7 @@ void AGoal::OnActorBeginOverlap(class UPrimitiveComponent* Comp, class AActor* O
 	if (OtherActor->IsA(ATeleShootCharacter::StaticClass())) {
 		ATeleShootCharacter* Character = Cast<ATeleShootCharacter>(OtherActor);
 		Character->EndLevel();
-		GetWorld()->GetTimerManager().SetTimer(EndLevelTimer, this, &AGoal::LevelEnded, 2, false);
+		GetWorld()->GetTimerManager().SetTimer(EndLevelTimer, this, &AGoal::LevelEnded, 1, false);
 		if ((GetWorld()->GetTimeSeconds() - StartTime) <= ParTime)
 			BeatSpeed = true;
 	}

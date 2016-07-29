@@ -188,7 +188,7 @@ void ATeleShootCharacter::UpdateBoxPosition() {
 				FVector projectile(loc.X - EndLocation.X, 0, loc.Z - EndLocation.Z);
 				FRotator SpawnRotation = projectile.Rotation();
 				SpawnRotation.Normalize();
-
+				//GEngine->AddOnScreenDebugMessage(3, 5.f, FColor::Red, SpawnRotation.Quaternion().ToString());
 				BoxSpring->SetWorldRotation(SpawnRotation);
 			}
 		}
@@ -301,13 +301,24 @@ void ATeleShootCharacter::Interact() {
 					projectile.Normalize();
 					FVector Location = loc + projectile * 170;
 
+
+					FHitResult Hit(ForceInit);
+
+					FCollisionQueryParams TraceParams(FName(TEXT("BoxCollsion")), true, this);
+					TraceParams.bTraceAsyncScene = true;
+					TraceParams.bReturnPhysicalMaterial = true;
+					TraceParams.AddIgnoredActor(this);
+					TraceParams.AddIgnoredActor(GetOwner());
+					if (GetWorld()->LineTraceSingleByChannel(Hit, GetActorLocation(), Location, ECC_GameTraceChannel2, TraceParams)) {
+						return;
+					}
 					HoldingBox->Drop(Location, Rotation);
+					HoldBox->SetComponentTickEnabled(false);
+					HoldBox->SetHiddenInGame(true);
+					HoldingBox = NULL;
 				}
 			}
 		}
-		HoldBox->SetComponentTickEnabled(false);
-		HoldBox->SetHiddenInGame(true);
-		HoldingBox = NULL;
 	}
 	else {
 		TArray<AActor*> OverlappingActors;
@@ -406,16 +417,6 @@ void ATeleShootCharacter::Fire2DRelease() {
 		if (PlayerController->DeprojectMousePositionToWorld(MousePosition, MouseDirection)) {
 			if (ProjectileClass != NULL) {
 				FVector EndLocation = MousePosition + CameraBoom->TargetArmLength * MouseDirection;
-				const FName TraceTag("MyTraceTag");
-				World->DebugDrawTraceTag = TraceTag;
-
-				FCollisionQueryParams TraceParams(FName(TEXT("CameraTrace")), true, this);
-				TraceParams.bTraceAsyncScene = true;
-				TraceParams.bReturnPhysicalMaterial = true;
-				TraceParams.AddIgnoredActor(this);
-				TraceParams.AddIgnoredActor(GetOwner());
-				TraceParams.TraceTag = TraceTag;
-
 				FVector loc(GetActorLocation());
 				FVector projectile(EndLocation.X - loc.X, 0, EndLocation.Z - loc.Z);
 
